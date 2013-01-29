@@ -2,12 +2,22 @@
  * @author Teppo Kankaanpää
  */
 
-function startRoom(data) {
-	//var xmlDoc = $.parseXML(data);
-	//var $xml = $(xmlDoc);
-	//var $datadata = $('data', $xml);
-	
+/*
+ * startRoom:
+ * Input is xml formatted data. If it contains status 10, then
+ * we change the view to Room list view.
+ * Otherwise we change the view to Room view and initialize
+ * the Room view with the word and time data contained in the xml.
+ * 
+ * This function is called as a result of registerp, joinroom, newroom, so 
+ * the back-end provides this data.
+ * 
+ * If status=1, then username and password combination was incorrect.
+ * Sensibly this only happens when called from registerp which is called from
+ * the Login view, so we show this error in the Login view.
+ */
 
+function startRoom(data) {
 	if ($(data).find("status").text() == 1) {
 		$("#warning").html("Kirjautuminen ei onnistunut.");
 	} else {
@@ -16,11 +26,8 @@ function startRoom(data) {
 	 	} else {
 			room = $(data).find("id").text();
 			updatewords(data);
-//			populateGrid("????????????????");
 			update(data);
 			poll();
-	//		wordwaiter();
-	//		chatwaiter();
 			document.getElementById("roomnumber").innerHTML = "Huone: " + $(data).find("roomname").text();
 			document.getElementById("titlescreen").style.display = "none";
 			document.getElementById("roomform").style.display = "none";
@@ -30,6 +37,13 @@ function startRoom(data) {
 
 }
 
+/*
+ * setPlayer:
+ * Called from Login view.
+ * Takes the player name and password from the form values and calls
+ * registerp back-end function. 
+ * 
+ */
 
 function setPlayer() {
 	$("#warning").html("");
@@ -48,7 +62,6 @@ function setPlayer() {
 	if (player != "" && passcode != "") {
 
 		var geturl = "/cgi-bin/process.cgi?func=registerp&player=" + player + "&passcode=" + passcode;
-		//document.myForm.debug.value = geturl;
 		$.ajax({
 			cache: false,
 			dataType : 'xml',
@@ -63,6 +76,13 @@ function setPlayer() {
 }
 
 
+/*
+ * initRoomList:
+ * Shows the Room list view.
+ * Also calls getrooms back-end function so that we can show the available rooms
+ * in the room list view as well.
+ * 
+ */
 
 function initRoomList() {
 	room = -1;
@@ -82,11 +102,14 @@ function initRoomList() {
 	}	
 }
 
-function showRoomList(data) {
-//	var xmlDoc = $.parseXML(data);
-//	var $xml = $(xmlDoc);
-//	var $room = $('room', $xml);
+/*
+ * showRoomList:
+ * Input is xml formatted data containing info on the current active rooms in
+ * the system.
+ * This shows it on a div in the room list view.
+ */
 
+function showRoomList(data) {
 	var $room = $(data).find("room");
 
 	var roomlist = "";
@@ -102,6 +125,12 @@ function showRoomList(data) {
 	$("#roomlist").html(roomlist);
 }
 
+/*
+ * joinroom:
+ * Called from the Room list view. Input is the id of the room that the user wishes to 
+ * join, and this function calls the back-end to fulfill this wish.
+ */
+
 function joinroom(data) {
 	var tmproom = data;
 	if (player != "" && passcode != "" && tmproom >= 0) {
@@ -116,9 +145,14 @@ function joinroom(data) {
 				startRoom(data);
 			},
 		});
-		//document.myForm.word.focus();
 	}
 }
+
+/*
+ * newroom:
+ * Called from the Room list view. Looks at the roomname form value and
+ * requests the database to create a new room by this name.
+ */
 
 function newroom() {
 	$("#warning2").html("");
@@ -140,15 +174,19 @@ function newroom() {
 				startRoom(data);
 			},
 		});
-		//document.myForm.word.focus();
 	}
 }
+
+/*
+ * leaveRoom:
+ * Called from Room view. Leaves the room the player is currently in and 
+ * after that returns to Room list view.
+ */
 
 function leaveRoom() {
 	if (player != "") {
 		roundEnded();
 		var geturl = "/cgi-bin/process.cgi?func=leaveroom&player=" + player + "&passcode=" + passcode;
-		//document.myForm.debug.value = geturl;
 		$.ajax({
 			cache: false,
 			dataType : 'xml',
@@ -160,5 +198,4 @@ function leaveRoom() {
 		});
 	}
 }
-
 

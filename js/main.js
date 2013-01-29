@@ -1,9 +1,10 @@
+var showhelp = false;
+
 var player = "";
 var passcode = "";
 var roundCont = false;
 var room = -1;
 
-var stop = false;
 var polling = false;
 
 var interval;
@@ -20,21 +21,30 @@ function debug(word) {
 }
 
 
+/*
+ * At the document load: Set some good css values, copy the help info from the
+ * help pop-up to the login page. 
+ * 
+ */
+
 $(document).ready(function() {
 	$("#ownwordlistcontainer").css("max-height", ($(window).height() - 55) + "px");
 	
 	$("#helpcopy").html($("#helpinfo").html());
-//	poll2();
-//	$("#help").text("a");
+	
 //	timerUpdate(5000);
 //	interval = setInterval(timerCounter, 200);
 });
 
+/*
+ * poll: Poll function for the long-poll query wordwaiter.
+ * 
+ */
 
 function poll() {
 	if (player != "" && room != -1 && !polling) {
 		setTimeout(function() {
-			if (stop == false && room != -1) {
+			if (room != -1) {
 				var geturl = '/cgi-bin/process.cgi?func=wordwaiter&player=' + player + "&passcode=" + passcode;
 				//		document.myForm.debug.value = geturl;
 				polling = true;
@@ -55,28 +65,17 @@ function poll() {
 		}, 200);
 	}
 }
-/*
-function poll2() {
-	setTimeout(function() {
-		var geturl = '/cgi-bin/test.php';
-				//		document.myForm.debug.value = geturl;
-				$.ajax({
-//					cache: false,
-					dataType : 'text',
-					type : 'GET',
-					url : geturl,
-					success : function(data) {
-						
-					},
-					complete : poll2
-				});
-		}, 200);
-}
-*/
 
-// Targetdate: sisältää ajan, jolloin nykyinen kierros päättyy
-// Päivitetään vain, jos uusi aika on tiukempi taikka yli minuutin löysempi
-// jolloin on tilattu lisää aikaa.
+/*
+ * timerUpdate:
+ * Input is the amount of milliseconds that the current round will still last.
+ * Sets the targetDate to the time when the current round will end.
+ * Only updates targetDate if it's stricter than the previous targetDate, so that
+ * sudden lag spikes don't mess up with the clock.
+ * 
+ * When the new targetDate is over a minute past the old one, then we do update the
+ * targetDate, as this is most probably because more time has been requested by players.
+ */
 
 function timerUpdate(remainingMillis) {
 	var currentDate = new Date();
@@ -90,6 +89,13 @@ function timerUpdate(remainingMillis) {
 		targetDate.setTime(currentDate.valueOf() + remainingMillis);
 	}
 }
+
+/*
+ * timerCounter:
+ * Called 5 times per second from roundContinues
+ * Takes the difference between targetDate and current time, and
+ * updates #time and other things that vary with time.
+ */
 
 function timerCounter() {
 	var currentDate = new Date();
@@ -121,6 +127,14 @@ function timerCounter() {
 }
 
 
+/*
+ * update:
+ * Input is xml formatted data from the backend containing <time> and
+ * <board> fields specifying remaining time in hundredths of a second and
+ * board as a bare string.
+ * 
+ */
+
 
 function update(data) {
 	//	document.myForm.debug.value = data;
@@ -144,6 +158,16 @@ function update(data) {
 			populateGrid($board.text());
 		}
 }
+
+/*
+ * roundContinues:
+ * Called when the round is still continuing.
+ * If it's the first call after the round has been ended, we
+ * update buttons, start the timer counter and reset the list of all
+ * possible words.
+ * 
+ */
+
 function roundContinues() {
 	if (roundCont == false) {
 		interval = setInterval(timerCounter, 200);
@@ -153,6 +177,15 @@ function roundContinues() {
 		resetallwords();
 	}
 }
+
+/*
+ * roundEnded:
+ * Called when the round has been ended.
+ * If it's the first call after the round was continuing, we
+ * update buttons, stop the timer counter and induce a back-end query
+ * to update the list of all words.
+ * 
+ */
 
 function roundEnded() {
 	if (roundCont == true) {
@@ -165,6 +198,17 @@ function roundEnded() {
 	}
 }
 
+/*
+ * updatewords:
+ * This rather large function takes as an input some xml data from the
+ * back-end, which contains all players in the room, some info on their statuses,
+ * score, and all the words they have submitted (or the count of the words, if the
+ * round is still continuing and they are not the calling player).
+ * 
+ * Finally we put this data up on the web page, player's own info to #playerframe 
+ * and info on other players to #players.
+ */
+
 function updatewords(data) {
 	//	document.myForm.debug.value = data;
 	//    document.myForm.time.value = data;
@@ -174,10 +218,6 @@ function updatewords(data) {
 
 	var $player = $(data).find("players").find("player");
 		
-	//var xmlDoc = $.parseXML(data);
-	//var $xml = $(xmlDoc);
-	//var $player = $('player', $xml);
-	
 	var container = document.getElementById("players");
 	var ownContainer = document.getElementById("ownarea");
 	var newHtml = "";
@@ -325,6 +365,13 @@ function updatewords(data) {
 	updateButtons();
 }
 
+/*
+ * updateButtons:
+ * Disables or enables the buttons and labels them based on the state the
+ * game is in.
+ * 
+ */
+
 function updateButtons() {
 	if (roundCont) {
 		if (moreTimeRequested) {
@@ -344,6 +391,13 @@ function updateButtons() {
 	document.myForm.showhide.disabled = roundCont;
 }
 
+/*
+ * populateGrid:
+ * Input is a string of 16 characters, and we put them in the
+ * elements #lett<i> in the table for i=1..16.
+ * 
+ */
+
 function populateGrid(grid) {
 	for ( i = 0; i < 16; i++) {
 		var container = document.getElementById("lett" + (i + 1));
@@ -361,12 +415,19 @@ function populateGrid(grid) {
 	}
 }
 
+/*
+ * newRound:
+ * Request a new round or more time by calling back-end function, depending
+ * on whether the round is still going on or has ended.
+ * Back-end returns round data (only with newround) and word data, so we update
+ * those.
+ */
+
 function newRound() {
 	if (player != "") {
 		if (! roundCont) {
 			
 			var geturl = "/cgi-bin/process.cgi?func=newround&player=" + player + "&passcode=" + passcode;
-			//document.myForm.debug.value = geturl;
 			$.ajax({
 				async: false,
 				cache: false,
@@ -379,7 +440,6 @@ function newRound() {
 			});
 		} else {
 			var geturl = "/cgi-bin/process.cgi?func=moretime&player=" + player + "&passcode=" + passcode;
-			//document.myForm.debug.value = geturl;
 			$.ajax({
 				async: false,
 				cache: false,
@@ -393,6 +453,12 @@ function newRound() {
 	}
 }
 
+/*
+ * submitWord:
+ * Submits a word to the back-end function. Back-end returns word data
+ * so we update that.
+ */
+
 function submitWord() {
 	if (player != "" && room != -1 && word != "") {
 		debug("-");
@@ -400,7 +466,6 @@ function submitWord() {
 		var geturl = "/cgi-bin/process.cgi?func=submitword&player=" + player + "&passcode=" + passcode + "&word=" + word;
 		//document.myForm.debug.value = geturl;
 		$.ajax({
-//			async: false,
 			cache: false,
 			dataType : 'xml',
 			type : 'GET',
@@ -412,6 +477,12 @@ function submitWord() {
 		document.myForm.word.value = "";
 	}
 }
+
+/*
+ * getWords:
+ * Queries word data from the back-end. This call is invoked when the round has ended
+ * and we want to see other players' words.
+ */
 
 function getWords() {
 	if (player != "" && room != -1) {
@@ -429,12 +500,15 @@ function getWords() {
 	}
 }
 
+/*
+ * removeWord:
+ * Requests back-end to disable (or enable) the specified word.
+ */
+
 function removeWord(data) {
 	if (player != "" && room != -1) {
 		var geturl = "/cgi-bin/process.cgi?func=removeword&player=" + player + "&passcode=" + passcode + "&word=" + data;
-		//document.myForm.debug.value = geturl;
 		$.ajax({
-//			async: false,
 			cache: false,
 			dataType : 'xml',
 			type : 'GET',
@@ -446,13 +520,10 @@ function removeWord(data) {
 	}
 }
 
-
-
-function stoprun() {
-	stop = true;
-}
-
-var showhelp = false;
+/*
+ * showhidehelp:
+ * Shows or hides the help pop-up.
+ */
 
 function showhidehelp() {
 	if (showhelp == false) {

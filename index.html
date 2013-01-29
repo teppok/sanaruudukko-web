@@ -30,7 +30,7 @@
 	</head>
 	<body>
 		<div id="help">
-			<span id="helplink"><a href="#" onclick="showhidehelp();">S&auml;&auml;nn&ouml;t</a></span>
+			<span id="helplink"><a href="#" onclick="showhidehelp();">Säännöt</a></span>
 			<div id="helpinfo">
 <!--
 				1) First choose a name and a room number.
@@ -50,20 +50,20 @@
 				so there is a possibility of harassment. Play nice.
 				-->
 				<ol>
-					<li>Sy&ouml;t&auml; sanoja, niin ett&auml; kirjaimet ovat ruudukossa kiinni toisissaan ja kirjainta saa k&auml;ytt&auml;&auml;
-						vain kerran. Sanoja ei voi sy&ouml;tt&auml;&auml;, kun kierros on p&auml;&auml;ttynyt.</li>
-					<li>Kaikki sanat, jotka l&ouml;ytyv&auml;t ruudukosta, kirjataan yl&ouml;s. Kierrostauoilla on pelaajien
-						teht&auml;v&auml;n&auml; p&auml;&auml;tt&auml;&auml;, mitk&auml; sanoista voidaan hyv&auml;ksy&auml; ja mitk&auml; pit&auml;&auml; poistaa.
-						S&auml;&auml;nn&ouml;iksi voidaan p&auml;&auml;tt&auml;&auml; esim., ett&auml; perusmuotoiset suomen kielen sanat tai niiden 
-						monikot k&auml;yv&auml;t.
-						Kielitoimiston suppeasta nykysuomen sanastosta l&ouml;ytyvien t&auml;llaisten 
-						sanojen per&auml;ss&auml; on apuna vihre&auml; merkki.</li>
-					<li>Pisteit&auml; ei saa sanoista, jotka jollakin muulla samassa huoneessa olijalla. 
-						Pidemmist&auml; sanoista saa enemm&auml;n pisteit&auml;.</li> 
-					<li>Kun kierros on p&auml;&auml;ttynyt, kaikkien huoneessa olijoiden on klikattava uusi kierros -nappia,
-						ett&auml; uusi kierros alkaisi. Uutta kierrosta odottavien nimet n&auml;kyv&auml;t vihre&auml;ll&auml;. 
+					<li>Syötä sanoja, niin että kirjaimet ovat ruudukossa kiinni toisissaan ja kirjainta saa käyttää
+						vain kerran. Sanoja ei voi syöttää, kun kierros on päättynyt.</li>
+					<li>Kaikki sanat, jotka löytyvät ruudukosta, kirjataan ylös. Kierrostauoilla on pelaajien
+						tehtävänä päättää, mitkä sanoista voidaan hyväksyä ja mitkä pitää poistaa.
+						Säännöiksi voidaan päättää esim., että perusmuotoiset suomen kielen sanat tai niiden 
+						monikot käyvät.
+						Kielitoimiston suppeasta nykysuomen sanastosta löytyvien tällaisten 
+						sanojen perässä on apuna vihreä merkki.</li>
+					<li>Pisteitä ei saa sanoista, jotka jollakin muulla samassa huoneessa olijalla. 
+						Pidemmistä sanoista saa enemmän pisteitä.</li> 
+					<li>Kun kierros on päättynyt, kaikkien huoneessa olijoiden on klikattava uusi kierros -nappia,
+						että uusi kierros alkaisi. Uutta kierrosta odottavien nimet näkyvät vihreällä. 
 						Jos joku pelaajista on poistunut koneelta, uusi kierros ei voi alkaa,
-						joten muiden pit&auml;&auml; poistua huoneesta ja valita uusi huone.</li>
+						joten muiden pitää poistua huoneesta ja valita uusi huone.</li>
 				</ol>
 			</div>
 		</div>
@@ -71,17 +71,17 @@
 			<div id="title">SANARUUDUKKO</div>
 			<div id="registerform">
 				<form name="registerform" onsubmit="return false;" action="#">
-					Sy&ouml;t&auml; nimesi. Sallitut merkit ovat isot ja pienet aakkoset ja numerot, enint&auml;&auml;n 16 merkki&auml;:<br />
+					Syötä nimesi. Sallitut merkit ovat isot ja pienet aakkoset ja numerot, enintään 16 merkkiä:<br />
 					<input type="text" onkeyup='if (event.keyCode == 13) { setPlayer(); }' name="name" />
 					<br />
-					Anna tunnussana itsellesi. Merkkirajoitukset kuten nimess&auml;. (Jos et ole viel&auml; pelannut kertaakaan, 
-					valitse mik&auml; tahansa ja paina se mieleen. &auml;l&auml; k&auml;yt&auml; tunnussanana mit&auml;&auml;n t&auml;rke&auml;&auml;):<br />
+					Anna tunnussana itsellesi. Merkkirajoitukset kuten nimessä. (Jos et ole vielä pelannut kertaakaan, 
+					valitse mikä tahansa ja paina se mieleen. älä käytä tunnussanana mitään tärkeää):<br />
 					<input type="text" onkeyup='if (event.keyCode == 13) { setPlayer(); }' value="" name="passcode" />
 					<br />
 				</form>
 			<div id="warning"> </div>
 			<div>
-				Huom: Peli saattaa joskus hieman tahmata. T&auml;m&auml; johtuu tietoliikenneyhteyksist&auml; pelin halpisserverille.
+				Huom: Peli saattaa joskus hieman tahmata. Tämä johtuu tietoliikenneyhteyksistä pelin halpisserverille.
 			</div>
 			<div id="helpcopy"> </div>
 			</div>
@@ -89,8 +89,8 @@
 		<div id="roomform">
 			<div id="roomlist">-</div>
 			<form name="roomform" onsubmit="return false;" action="#">
-				<input type="button" name="round" value="P&auml;ivit&auml; lista" onclick="initRoomList();" /><br />
-				Valitse huone listalta tai luo uusi huone nimell&auml;. Nimi saa sis&auml;lt&auml;&auml; isoja ja pieni&auml; aakkosia sek&auml; numeroita, enint&auml;&auml;n 16 merkki&auml;:<br />
+				<input type="button" name="round" value="Päivitä lista" onclick="initRoomList();" /><br />
+				Valitse huone listalta tai luo uusi huone nimellä. Nimi saa sisältää isoja ja pieniä aakkosia sekä numeroita, enintään 16 merkkiä:<br />
 				<input type="text" onkeyup='if (event.keyCode == 13) { newroom(); }' value="" name="roomname" />
 				<div id="warning2"> </div>
 			</form>
@@ -117,13 +117,13 @@
 							</TR>
 						</TABLE>
 						<div id="time">
-							(Kierros p&auml;&auml;ttynyt)
+							(Kierros päättynyt)
 						</div>
 					</div>
 					<div id="formarea">
 						<input type="button" name="round" value="Uusi kierros" onclick="newRound();" /><br />
 						<input type="button" name="leave" value="Poistu huoneesta" onclick="leaveRoom();" /><br />
-						<input type="button" style="width: 210px;" name="showhide" value="N&auml;yt&auml; kaikki mahdollisuudet" onclick="showhideallwords();" />
+						<input type="button" style="width: 210px;" name="showhide" value="Näytä kaikki mahdollisuudet" onclick="showhideallwords();" />
 					</div>
 					<div id="chatarea">
 						Huone-chat:
@@ -139,7 +139,7 @@
 <!--					</div>-->
 
 					<div id="ownarea">
-						<div id="ownframecontainer"><div class="playerframe"></div></div>
+						<div id="ownframecontainer"><div class="playerframe"> </div></div>
 						<div id="wordarea">
 							<input type='text' onkeydown='if (event.keyCode == 13) { submitWord(); }' name='word' />
 						</div>

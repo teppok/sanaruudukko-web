@@ -6,6 +6,14 @@ var allWordsShown = false;
 
 var allWordsRequested = false;
 
+/*
+ * initAllWords:
+ * Requests the all words list if the system is in a good state (the list not 
+ * 	already requested, the round is not continuing).
+ * 
+ * 
+ */
+
 function initAllWords() {
 	if (! allWordsRequested && ! roundCont) {
 		allWordsRequested = true;
@@ -23,6 +31,13 @@ function initAllWords() {
 	    }
 	}
 }
+
+/*
+ * showAllWords:
+ * The input is some xml formatted data from the back-end that contains the
+ * list of all possible words in the word list that exist in the grid. This
+ * function shows these words in the #allwords div.
+ */
 
 function showAllWords(data) {
 	var $word = $(data).find("word");
@@ -45,12 +60,24 @@ function showAllWords(data) {
 
 }
 
+/*
+ * resetallwords:
+ * Clears and hides the all words list. This function is called when a new round starts.
+ * 
+ */
+
 function resetallwords() {
 	allWordsRequested = false;
 	allWordsShown = false;
 	$("#allwords").html("Kierros on kesken.");
 	document.getElementById('allwords').style.display = 'none';
 }
+
+/*
+ * showhideallwords:
+ * Shows and hides the all words div, and on show we also do the call to update the
+ * list using initAllWords().
+ */
 
 function showhideallwords() {
 		if (allWordsShown == false) {
