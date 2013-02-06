@@ -25,13 +25,13 @@ function startRoom(data) {
 			initRoomList();
 	 	} else {
 			room = $(data).find("id").text();
-			updatewords(data);
-			update(data);
-			poll();
 			document.getElementById("roomnumber").innerHTML = "Huone: " + $(data).find("roomname").text();
 			document.getElementById("titlescreen").style.display = "none";
 			document.getElementById("roomform").style.display = "none";
 			document.getElementById("playarea").style.display = "block";
+			updatewords(data);
+			update(data);
+			poll();
 		}
 	}
 

@@ -31,7 +31,7 @@ $(document).ready(function() {
 	$("#ownwordlistcontainer").css("max-height", ($(window).height() - 55) + "px");
 	
 	$("#helpcopy").html($("#helpinfo").html());
-	
+
 //	timerUpdate(5000);
 //	interval = setInterval(timerCounter, 200);
 });
@@ -53,13 +53,16 @@ function poll() {
 					dataType : 'xml',
 					type : 'GET',
 					url : geturl,
+					timeout: 20000,
 					success : function(data) {
-						polling = false;
 						update(data);
 						updatewords(data);
 						updatechat(data);
 					},
-					complete : poll
+					complete : function(data) {
+						polling = false;
+						poll();
+					}
 				});
 			}
 		}, 200);
@@ -229,6 +232,9 @@ function updatewords(data) {
 	
 	if ($player.text() == "") { return; }
 
+	var maxPlayers = Math.floor(($(window).width() - $("#upperarea").width() - 70) / 200) - 1;
+//	alert($(window).width() + " "+ $("#upperarea").width() + " " + maxPlayers);
+
 	moreTimeRequested = false;
 	newRoundRequested = false;
 
@@ -343,7 +349,7 @@ function updatewords(data) {
 			//						ownContainer.innerHTML = "<div class='playerframe'>" + newHtml + "</div>";
 		} else {
 			players++;
-			if (players % 4 == 0) {
+			if (players % (maxPlayers + 1) == 0) {
 				containerHTML = containerHTML + "<div class='otherplayerframerow'>" + newHtml + "</div>";
 			} else {
 				containerHTML = containerHTML + "<div class='otherplayerframe'>" + newHtml + "</div>";
@@ -354,8 +360,8 @@ function updatewords(data) {
 	if (players > 0) {
 		$('#players').html(containerHTML);
 		$('#players').css("display", "block");
-		if (players > 3) {
-			players = 3;
+		if (players > maxPlayers) {
+			players = maxPlayers;
 		}
 		$('#players').css("width", (players * 202) + "px");
 	} else {
