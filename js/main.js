@@ -7,6 +7,8 @@ var room = -1;
 
 var polling = false;
 
+var roundStarting = false;
+
 var interval;
 var targetDate;
 
@@ -105,25 +107,37 @@ function timerCounter() {
 	var remainingNow = targetDate.valueOf() - currentDate.valueOf();
 
 
-	if (remainingNow < 0) {
-		$('#time').html("(Kierros päättynyt)");
-		roundEnded();
-	} else {
-		var seconds = Math.floor((remainingNow / 1000)) % 60;
-		var minutes = Math.floor((remainingNow / 1000) / 60);
-		if (seconds < 10) { seconds = '0' + seconds; }
-		$("#time").text(minutes + ":" + seconds);
-	}
-
-	if (remainingNow < 60000) {
-		if (lastMinute == false) {
-			lastMinute = true;
-			updateButtons();
+    if (! roundStarting) {
+		if (remainingNow < 0) {
+			$('#time').html("(Kierros päättynyt)");
+			roundEnded();
+		} else {
+			var seconds = Math.floor((remainingNow / 1000)) % 60;
+			var minutes = Math.floor((remainingNow / 1000) / 60);
+			if (seconds < 10) { seconds = '0' + seconds; }
+			$("#time").text(minutes + ":" + seconds);
+		}
+	
+		if (remainingNow < 60000) {
+			if (lastMinute == false) {
+				lastMinute = true;
+				updateButtons();
+			}
+		} else {
+			if (lastMinute == true) {
+				lastMinute = false;
+				updateButtons();
+			}
 		}
 	} else {
-		if (lastMinute == true) {
-			lastMinute = false;
-			updateButtons();
+		if (remainingNow < 0) {
+			$('#time').html("Alkaa: 0:00");
+//			roundEnded();
+		} else {
+			var seconds = Math.floor((remainingNow / 1000)) % 60;
+			var minutes = Math.floor((remainingNow / 1000) / 60);
+			if (seconds < 10) { seconds = '0' + seconds; }
+			$("#time").text("Alkaa: " + minutes + ":" + seconds);
 		}
 	}
 
@@ -149,7 +163,8 @@ function update(data) {
 		
 		var $time = $(data).find("time");
 		var $board = $(data).find("board");
-	
+		var $starting = $(data).find("starting");
+		
 		//				document.myForm.time.value = $test.text();
 	    //$("#help").text(data);
 		if ($time.text() != "") {
@@ -159,6 +174,12 @@ function update(data) {
 	
 		if ($board.text() != "") {
 			populateGrid($board.text());
+		}
+		
+		if ($starting.text() == "1") {
+			roundStarting = true;
+		} else {
+			roundStarting = false;
 		}
 }
 
